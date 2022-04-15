@@ -29,12 +29,13 @@ def part_1(input_lines):
 def part_2(input_lines):
     print('-- Part 2 ----------------------------------')
     input_lines_p2 = deepcopy(input_lines)
-    
-    day_count = 0
-    counters = list_str_to_int(input_lines_p2[0].split(','))
-    fish_counter = {i: 0 for i in range(9)}
 
+    counters = list_str_to_int(input_lines_p2[0].split(','))
+
+    fish_counter = {i: 0 for i in range(9)}
     fish_counter.update(Counter(counters))
+
+    day_count = 0
 
     while day_count < 256:
         day_zero = fish_counter[0]

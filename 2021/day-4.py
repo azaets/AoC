@@ -1,4 +1,4 @@
-from res.utils import parse_input
+from res.utils import parse_input, list_str_to_int
 from copy import deepcopy
 import numpy as np
 
@@ -11,7 +11,7 @@ def part_1(input_lines):
     board = []
 
     numbers_drawn = input_lines_p1.pop(0)
-    numbers_drawn = list(map(int, numbers_drawn.split(',')))
+    numbers_drawn = list_str_to_int(numbers_drawn.split(','))
 
     input_lines_p1.append('')
 
@@ -22,7 +22,7 @@ def part_1(input_lines):
                 boards.append(board_and_trans)
                 board = []
         else:
-            board.append(list(map(int, line.replace('  ', ' ').split(' '))))
+            board.append(list_str_to_int(line.replace('  ', ' ').split(' ')))
 
     drawn_numbers = numbers_drawn[:4]
     drawn_numbers = set(drawn_numbers)
