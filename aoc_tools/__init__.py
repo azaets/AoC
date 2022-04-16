@@ -16,7 +16,7 @@ def inti_logger():
     global aoc_tools_logger
 
     if aoc_tools_logger is None:
-        aoc_tools_logger = logging.getLogger('AoCtools')
+        aoc_tools_logger = logging.getLogger('AoC-Tools')
         aoc_tools_logger.setLevel(logging.DEBUG)
 
         console_handler = logging.StreamHandler(stream=sys.stdout)
