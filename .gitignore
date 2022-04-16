@@ -128,5 +128,5 @@ dmypy.json
 # Pyre type checker
 .pyre/
 .idea
-base/aoc_session.txt
+res/aoc_session.txt
 .DS_Store
