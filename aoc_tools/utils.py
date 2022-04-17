@@ -1,8 +1,21 @@
 import logging
+from pathlib import Path
+from functools import wraps
+
 from aoc_tools.defenitions import PROJECT_ROOT_DIR
 
 
 logger = logging.getLogger("AoC-Tools")
+
+
+def display_return_value(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        result = func(*args, **kwargs)
+        if result:
+            print(f"{func.__name__}: {result}")
+        return result
+    return wrapper
 
 
 def create_file(file_path, contents):
@@ -20,43 +33,39 @@ def create_file(file_path, contents):
         logger.warning(f"File {file_path} already exists.")
 
 
-def create_py_file_from_template(challenge_year, challenge_day):
-    template = f"""from copy import deepcopy
+def create_solution_file_from_template(challenge_year, challenge_day):
+    template = f"""
+    
+from abc import ABC
+from copy import deepcopy
 import numpy as np
 
 from aoc_tools.challenge import Challenge
 
 
-def part_1(input_lines):
-    print('-- Part 1 ----------------------------------')
-    input_lines_p1 = deepcopy(input_lines)
+class Day{challenge_day}(Challenge, ABC):
+    def __init__(self, year: int, day: int):
+        super().__init__(year, day)
 
-    count = 0
+    def solution_part_1(self):
+        print(self.challenge_input)
 
-    return count
-
-
-def part_2(input_lines):
-    print('-- Part 2 ----------------------------------')
-    input_lines_p2 = deepcopy(input_lines)
-
-    count = 0
-
-    return count
+    def solution_part_2(self):
+        print(self.challenge_input)
 
 
-if __name__ == "__main__":
-    challenge = Challenge(year={challenge_year}, day={challenge_day})
-    puzzle_input = challenge.get_challenge_input()
+if __name__ == '__main__':
+    puzzle = Day{challenge_day}({challenge_year}, {challenge_day})
+    puzzle.reload_challenge_input()
+    
+    puzzle.solution_part_1()
+    puzzle.solution_part_2()
+    
+"""
 
-    print(part_1(puzzle_input))
-    print(part_2(puzzle_input))
-
-    """
-
-    py_file_path = PROJECT_ROOT_DIR / f"{challenge_year}/day_{challenge_day}/solution_{challenge_year}_{challenge_day}.py"
-    create_file(py_file_path, contents=template)
+    py_file_path = PROJECT_ROOT_DIR / Path(f"{challenge_year}/day_{challenge_day}/solution_{challenge_year}_{challenge_day}.py")
+    create_file(py_file_path, contents=template.strip())
 
 
 if __name__ == "__main__":
-    create_py_file_from_template(challenge_year=2019, challenge_day=1)
+    create_solution_file_from_template(challenge_year=2020, challenge_day=1)

@@ -1,15 +1,19 @@
+from abc import abstractmethod
 from pathlib import Path
 import logging
 import requests
+import webbrowser
 
 from aoc_tools.defenitions import PROJECT_ROOT_DIR
-from aoc_tools.utils import create_file
+from aoc_tools.utils import create_file, create_solution_file_from_template
 
 logger = logging.getLogger("AoC-Tools")
 
 
 class FailedToGetChallengeInput(Exception):
     """ Unexpected error during request for challenge input. """
+
+
 
 
 class Challenge:
@@ -22,11 +26,19 @@ class Challenge:
         self.year = year
         self.day = day
 
+        self.challenge_url = f"https://adventofcode.com/{self.year}/day/{self.day}"
+
+        self.solution_file_path = PROJECT_ROOT_DIR / Path(f"{self.year}/day_{self.day}/solution_{self.year}_{self.day}.py")
         self.input_file_path = PROJECT_ROOT_DIR / Path(f"{self.year}/day_{self.day}/input_{self.year}_{self.day}.txt")
+        self.sample_input_file_path = PROJECT_ROOT_DIR / Path(f"{self.year}/day_{self.day}/sample_input_{self.year}_{self.day}.txt")
+
+        self.sample_input_solution = None
 
         self.session = None
-
         self.challenge_input = None
+        self.sample_input = None
+
+        self.TEST_INPUT = False
 
     def __repr__(self):
         return f"Challenge({self.year}, {self.day})"
@@ -34,8 +46,34 @@ class Challenge:
     def __str__(self):
         return f'Advent of Code {self.year} (day {self.day})'
 
+    @classmethod
+    def init_new_challenge(cls, year: int, day: int):
+        logger.info("Creating new challenge...")
+        new_challenge = cls(year, day)
+        new_challenge.quick_start()
+
+    @abstractmethod
+    def solution_part_1(self):
+        raise NotImplementedError
+
+    @abstractmethod
+    def solution_part_2(self):
+        raise NotImplementedError
+
+    def quick_start(self):
+        self.create_new_solution_template()
+        self.reload_challenge_inputs()
+        self.add_sample_input()
+        self.open_challenge_web_page()
+
+    def open_challenge_web_page(self):
+        logger.info("Opening challenge web page...")
+        webbrowser.open(self.challenge_url, new=0, autoraise=True)
+
     def request_challenge_input(self):
-        challenge_url = f'https://adventofcode.com/{self.year}/day/{self.day}/input'
+        logger.info("Retrieving challenge input...")
+
+        challenge_input_url = f"{self.challenge_url}/input"
 
         # Cookie session must be stored in a file located at project_root/res/aoc_session.txt
         secret_file_path = PROJECT_ROOT_DIR / Path("res/aoc_session.txt")
@@ -52,7 +90,7 @@ class Challenge:
 
             # Download challenge input
             try:
-                response = self.session.get(challenge_url)
+                response = self.session.get(challenge_input_url)
                 response.raise_for_status()
                 self.challenge_input = response.text.splitlines()
 
@@ -67,19 +105,43 @@ class Challenge:
             except FileExistsError:
                 logger.debug(f"File already exists. Skipping to avoid file overwrite: {self.input_file_path}")
 
-    def get_challenge_input(self, reload=False):
-        if (self.challenge_input is None) or reload:
+    def reload_challenge_inputs(self, reload=False):
+        # Reload challenge input
+        if not self.input_file_path.exists() or reload:
             self.request_challenge_input()
         else:
             with open(self.input_file_path, 'r') as input_file:
-                self.challenge_input = input_file.readlines()
+                self.challenge_input = input_file.read().splitlines()
 
-        return self.challenge_input
+        # Try to reload sample input
+        try:
+            with open(self.sample_input_file_path, 'r') as sample_input_file:
+                self.sample_input = sample_input_file.read().splitlines()
+        except(FileNotFoundError, IsADirectoryError):
+            logger.error(f"Sample input file not found: {self.sample_input_file_path.absolute()}")
 
-    def register_parser(self, parser):
+    @property
+    def puzzle_input(self):
+        if self.TEST_INPUT:
+            if not self.sample_input:
+                raise FailedToGetChallengeInput(f"Sample input not found in file: {self.sample_input_file_path.absolute()}")
+            else:
+                return self.sample_input
+        else:
+            return self.challenge_input
+
+    def parse_challenge_input(self, parser):
         raise NotImplementedError
+
+    def add_sample_input(self, sample_input=None):
+        logger.info("Creating file for sample input...")
+
+        create_file(file_path=self.sample_input_file_path, contents=sample_input or "")
+
+    def create_new_solution_template(self):
+        logger.info("Creating new solution template...")
+        create_solution_file_from_template(challenge_year=self.year, challenge_day=self.day)
 
 
 if __name__ == "__main__":
-    challenge = Challenge(2020, 6)
-    challenge.get_challenge_input()
+    Challenge.init_new_challenge(2020, 1)
