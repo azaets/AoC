@@ -18,6 +18,29 @@ def display_return_value(func):
     return wrapper
 
 
+def verify_sample_input(original_function=None, expected_sample_output=None):
+    def _decorate(function):
+        @wraps(function)
+        def wrapped_function(*args, **kwargs):
+            if expected_sample_output:
+                result = function(*args, sample_input=True)
+                if result != expected_sample_output:
+                    logger.warning(f"{function.__name__} | Produced result of {result} does not match expected output of {expected_sample_output}")
+                    return result
+                else:
+                    logger.info(f"{function.__name__} | Successfully passed test case. Result: {result}")
+                    result = function(*args, sample_input=False)
+                    logger.info(f"{function.__name__} | Challenge output: {result}")
+                    return result
+            else:
+                return function(*args, sample_input=False)
+        return wrapped_function
+
+    if original_function:
+        return _decorate(original_function)
+    return _decorate
+
+
 def create_file(file_path, contents):
     """
     Create file with given contents.
@@ -41,22 +64,27 @@ from copy import deepcopy
 import numpy as np
 
 from aoc_tools.challenge import Challenge
+from aoc_tools.utils import display_return_value, verify_sample_input
 
 
 class Day{challenge_day}(Challenge, ABC):
     def __init__(self, year: int, day: int):
         super().__init__(year, day)
 
-    def solution_part_1(self):
-        print(self.challenge_input)
+    @verify_sample_input(expected_sample_output=None)
+    def solution_part_1(self, sample_input=True):
+        
+        return 0
 
-    def solution_part_2(self):
-        print(self.challenge_input)
+    @verify_sample_input(expected_sample_output=None)
+    def solution_part_2(self, sample_input=True):
+        
+        return 0
 
 
 if __name__ == '__main__':
     puzzle = Day{challenge_day}({challenge_year}, {challenge_day})
-    puzzle.reload_challenge_input()
+    puzzle.reload_challenge_inputs()
     
     puzzle.solution_part_1()
     puzzle.solution_part_2()

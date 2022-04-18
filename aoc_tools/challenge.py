@@ -38,8 +38,6 @@ class Challenge:
         self.challenge_input = None
         self.sample_input = None
 
-        self.TEST_INPUT = False
-
     def __repr__(self):
         return f"Challenge({self.year}, {self.day})"
 
@@ -120,9 +118,8 @@ class Challenge:
         except(FileNotFoundError, IsADirectoryError):
             logger.error(f"Sample input file not found: {self.sample_input_file_path.absolute()}")
 
-    @property
-    def puzzle_input(self):
-        if self.TEST_INPUT:
+    def puzzle_input(self, sample_input=True):
+        if sample_input:
             if not self.sample_input:
                 raise FailedToGetChallengeInput(f"Sample input not found in file: {self.sample_input_file_path.absolute()}")
             else:
@@ -144,4 +141,4 @@ class Challenge:
 
 
 if __name__ == "__main__":
-    Challenge.init_new_challenge(2020, 1)
+    Challenge.init_new_challenge(2020, 2)
