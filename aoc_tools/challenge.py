@@ -4,16 +4,12 @@ import logging
 import requests
 import webbrowser
 
+from aoc_tools.exceptions import FailedToGetChallengeInput
+from aoc_tools.parser import Parser
 from aoc_tools.defenitions import PROJECT_ROOT_DIR
 from aoc_tools.utils import create_file, create_solution_file_from_template
 
 logger = logging.getLogger("AoC-Tools")
-
-
-class FailedToGetChallengeInput(Exception):
-    """ Unexpected error during request for challenge input. """
-
-
 
 
 class Challenge:
@@ -32,11 +28,11 @@ class Challenge:
         self.input_file_path = PROJECT_ROOT_DIR / Path(f"{self.year}/day_{self.day}/input_{self.year}_{self.day}.txt")
         self.sample_input_file_path = PROJECT_ROOT_DIR / Path(f"{self.year}/day_{self.day}/sample_input_{self.year}_{self.day}.txt")
 
-        self.sample_input_solution = None
-
         self.session = None
         self.challenge_input = None
         self.sample_input = None
+
+        self.input_parser: Parser = None
 
     def __repr__(self):
         return f"Challenge({self.year}, {self.day})"
@@ -127,8 +123,10 @@ class Challenge:
         else:
             return self.challenge_input
 
-    def parse_challenge_input(self, parser):
-        raise NotImplementedError
+    def register_input_parser(self, parser: Parser):
+        self.input_parser = parser
+        self.input_parser.load_inputs(challenge_input=self.challenge_input,
+                                      sample_input=self.sample_input)
 
     def add_sample_input(self, sample_input=None):
         logger.info("Creating file for sample input...")

@@ -64,27 +64,39 @@ from copy import deepcopy
 import numpy as np
 
 from aoc_tools.challenge import Challenge
+from aoc_tools.parser import Parser
 from aoc_tools.utils import display_return_value, verify_sample_input
 
 
-class Day{challenge_day}(Challenge, ABC):
+class InputParser(Parser, ABC):
+    def __init__(self):
+        super(InputParser, self).__init__()
+        
+
+class Solution(Challenge, ABC):
     def __init__(self, year: int, day: int):
         super().__init__(year, day)
+        self.input_parser: InputParser = ...
 
     @verify_sample_input(expected_sample_output=None)
     def solution_part_1(self, sample_input=True):
-        
+        self.input_parser.set_input(sample_input=sample_input)
+
         return 0
 
     @verify_sample_input(expected_sample_output=None)
     def solution_part_2(self, sample_input=True):
+        self.input_parser.set_input(sample_input=sample_input)
         
         return 0
 
 
 if __name__ == '__main__':
-    puzzle = Day{challenge_day}({challenge_year}, {challenge_day})
+    puzzle = Solution({challenge_year}, {challenge_day})
     puzzle.reload_challenge_inputs()
+    
+    parser = InputParser()
+    puzzle.register_input_parser(parser)
     
     puzzle.solution_part_1()
     puzzle.solution_part_2()
