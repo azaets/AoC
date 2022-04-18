@@ -118,7 +118,7 @@ class Challenge:
         except(FileNotFoundError, IsADirectoryError):
             logger.error(f"Sample input file not found: {self.sample_input_file_path.absolute()}")
 
-    def puzzle_input(self, sample_input=True):
+    def puzzle_input(self, sample_input=False):
         if sample_input:
             if not self.sample_input:
                 raise FailedToGetChallengeInput(f"Sample input not found in file: {self.sample_input_file_path.absolute()}")
