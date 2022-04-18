@@ -125,8 +125,8 @@ class Challenge:
 
     def register_input_parser(self, parser: Parser):
         self.input_parser = parser
-        self.input_parser.load_inputs(challenge_input=self.challenge_input,
-                                      sample_input=self.sample_input)
+        self.input_parser.load_inputs(challenge_input=self.puzzle_input(sample_input=False),
+                                      sample_input=self.puzzle_input(sample_input=True))
 
     def add_sample_input(self, sample_input=None):
         logger.info("Creating file for sample input...")
@@ -139,4 +139,4 @@ class Challenge:
 
 
 if __name__ == "__main__":
-    Challenge.init_new_challenge(2020, 2)
+    Challenge.init_new_challenge(2020, 4)
