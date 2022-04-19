@@ -22,7 +22,7 @@ def verify_sample_input(original_function=None, expected_sample_output=None):
     def _decorate(function):
         @wraps(function)
         def wrapped_function(*args, **kwargs):
-            if expected_sample_output:
+            if expected_sample_output is not None:
                 result = function(*args, sample_input=True)
                 if result != expected_sample_output:
                     logger.warning(f"{function.__name__} | Produced result of {result} does not match expected output of {expected_sample_output}")
