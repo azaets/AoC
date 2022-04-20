@@ -12,17 +12,6 @@ class InputParser(Parser, ABC):
     def __init__(self):
         super(InputParser, self).__init__()
 
-    def split_by_empty_line(self):
-        line_group = list()
-        for line in self.puzzle_input():
-            if not line:
-                yield line_group
-                line_group = list()
-            else:
-                line_group.extend(line.split(' '))
-
-        yield line_group  # Yield the last group of lines
-
     def get_passport_fields(self):
         passports = list()
 

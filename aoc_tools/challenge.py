@@ -139,4 +139,4 @@ class Challenge:
 
 
 if __name__ == "__main__":
-    Challenge.init_new_challenge(2020, 5)
+    Challenge.init_new_challenge(2020, 6)
