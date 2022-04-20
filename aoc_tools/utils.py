@@ -30,7 +30,7 @@ def verify_sample_input(original_function=None, expected_sample_output=None):
                 else:
                     logger.info(f"{function.__name__} | Successfully passed test case. Result: {result}")
                     result = function(*args, sample_input=False)
-
+                    logger.info(f"{function.__name__} | Challenge output: {result}")
                     return result
             else:
                 result = function(*args, sample_input=False)
