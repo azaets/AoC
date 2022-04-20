@@ -34,5 +34,16 @@ class Parser:
 
     # Helper Functions
 
+    def split_by_empty_line(self):
+        line_group = list()
+        for line in self.puzzle_input():
+            if not line:
+                yield line_group
+                line_group = list()
+            else:
+                line_group.extend(line.split(' '))
+
+        yield line_group  # Yield the last group of lines
+
     def str_to_int(self, list_of_str: List[str]) -> List[int]:
         return list(map(int, list_of_str))
