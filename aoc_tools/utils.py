@@ -30,10 +30,12 @@ def verify_sample_input(original_function=None, expected_sample_output=None):
                 else:
                     logger.info(f"{function.__name__} | Successfully passed test case. Result: {result}")
                     result = function(*args, sample_input=False)
-                    logger.info(f"{function.__name__} | Challenge output: {result}")
+
                     return result
             else:
-                return function(*args, sample_input=False)
+                result = function(*args, sample_input=False)
+                logger.info(f"{function.__name__} | Challenge output: {result}")
+                return result
         return wrapped_function
 
     if original_function:
