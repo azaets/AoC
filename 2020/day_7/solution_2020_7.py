@@ -17,7 +17,10 @@ class InputParser(Parser, ABC):
             bag_contents = defaultdict(dict)
             parent_bag, contents = self.get_parent_bag(rule)
             for child_bag in self.get_children_bags(contents):
-                bag_contents[parent_bag.strip()].update(child_bag)
+                if child_bag is None:
+                    continue
+                else:
+                    bag_contents[parent_bag.strip()].update(child_bag)
 
             yield bag_contents
 
@@ -28,11 +31,12 @@ class InputParser(Parser, ABC):
     @staticmethod
     def get_children_bags(contents: str):
         bags = contents.split(', ')
+
         for bag in bags:
             bag = bag.strip()  # Remove leading/trailing spaces
             bag_quantity, bag_color = bag.split(' ', maxsplit=1)
             if bag_quantity == "no":
-                yield {bag_color: None}
+                yield None
             else:
                 bag_color = ' '.join(bag_color.split(' ')[:2])
                 yield {bag_color: bag_quantity}
@@ -72,11 +76,28 @@ class Solution(Challenge, ABC):
 
         return big_bag_count
 
-    @verify_sample_input(expected_sample_output=None)
+    @verify_sample_input(expected_sample_output=32)
     def solution_part_2(self, sample_input=True):
         self.input_parser.set_input(sample_input=sample_input)
 
-        return 0
+        bags_map = dict()
+
+        for bag_contents in self.input_parser.get_bag_contents():
+            bags_map.update(bag_contents)
+
+        def count_bags(next_parent_bag_color, next_parent_bag_count):
+
+            if (next_parent_bag_color not in bags_map) or (bags_map[next_parent_bag_color] is None):
+                return int(next_parent_bag_count)
+
+            parent_bag_count = 0
+
+            for bag_color, count in bags_map[next_parent_bag_color].items():
+                parent_bag_count += count_bags(bag_color, count)
+
+            return int(next_parent_bag_count) * parent_bag_count + int(next_parent_bag_count)
+
+        return count_bags(self.my_bag, 1) - 1
 
 
 if __name__ == '__main__':
