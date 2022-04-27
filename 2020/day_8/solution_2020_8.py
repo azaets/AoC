@@ -49,11 +49,47 @@ class Solution(Challenge, ABC):
 
         return accumulator
 
-    @verify_sample_input(expected_sample_output=None)
+    @verify_sample_input(expected_sample_output=8)
     def solution_part_2(self, sample_input=True):
         self.input_parser.set_input(sample_input=sample_input)
-        
-        return 0
+
+        instruction_set = self.input_parser.create_instruction_set()
+
+        instruction_swap_map = {
+            'nop': 'jmp',
+            'jmp': 'nop'
+        }
+
+        nop_jmp_instruction_number = []
+
+        for i, instruction in enumerate(instruction_set):
+            if instruction[0] in {'nop', 'jmp'}:
+                nop_jmp_instruction_number.append(i)
+
+        for instruction_to_change in nop_jmp_instruction_number:
+
+            accumulator = 0
+            program_counter = 0
+            executed_instructions = set()
+
+            while program_counter not in executed_instructions:
+                executed_instructions.add(program_counter)
+
+                instruction, value = instruction_set[program_counter]
+
+                if program_counter == instruction_to_change:
+                    instruction = instruction_swap_map[instruction]
+
+                if instruction == 'nop':
+                    program_counter += 1
+                elif instruction == 'acc':
+                    accumulator += value
+                    program_counter += 1
+                elif instruction == 'jmp':
+                    program_counter += value
+
+                if program_counter == len(instruction_set):
+                    return accumulator
 
 
 if __name__ == '__main__':
