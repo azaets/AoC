@@ -32,7 +32,7 @@ class Solution(Challenge, ABC):
 
         return False
 
-    @verify_sample_input
+    @verify_sample_input(expected_sample_output=None)
     def solution_part_1(self, sample_input=True):
         self.input_parser.set_input(sample_input=sample_input)
 
@@ -49,6 +49,17 @@ class Solution(Challenge, ABC):
     @verify_sample_input(expected_sample_output=None)
     def solution_part_2(self, sample_input=True):
         self.input_parser.set_input(sample_input=sample_input)
+
+        invalid_number = 552655238
+
+        nums = self.input_parser.get_list_of_numbers()
+
+        for window_width in range(2, len(nums)):
+            for slide_offset in range(1, len(nums) - window_width):
+                contiguous_set = nums[slide_offset:slide_offset+window_width]
+                contiguous_set_sum = sum(contiguous_set)
+                if contiguous_set_sum == invalid_number:
+                    return min(contiguous_set) + max(contiguous_set)
         
         return 0
 
