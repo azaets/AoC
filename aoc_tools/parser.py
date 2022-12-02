@@ -45,5 +45,9 @@ class Parser:
 
         yield line_group  # Yield the last group of lines
 
+    def split_by_line_by_char(self):
+        for line in self.puzzle_input():
+            yield line.split()
+
     def str_to_int(self, list_of_str: List[str]) -> List[int]:
         return list(map(int, list_of_str))
